@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# ------------------------------------------------------------
+# debinsight
+#
+# debinsight helper start script
+#
+# This file is part of debinsight.
+# See the LICENSE file for the software license.
+# (C) Copyright 2019, Oliver Maurhart, dyle71@gmail.com
+# ------------------------------------------------------------
+
+/usr/bin/env python3 -m debinsight $*
+
