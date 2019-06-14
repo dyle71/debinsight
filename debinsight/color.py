@@ -15,6 +15,17 @@ import colors
 from .configuration import Configuration
 
 
+def tool(t: str) -> str:
+    """Color for tool names.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='cyan')
+    return t
+
+
 def package(t: str) -> str:
     """Color for package names.
     

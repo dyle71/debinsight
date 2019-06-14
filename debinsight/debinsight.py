@@ -58,7 +58,16 @@ def _ensures_apt_cache_presence() -> None:
         sys.stderr.write('apt-cache not found on the system.\n')
         sys.stderr.write('Is this a Debian (or Debian derivate) system?\n')
         sys.exit(1)
-    print('Found apt-cache: ' + Configuration().apt_cache)
+    print('Found apt-cache: ' + color.tool(Configuration().apt_cache))
+
+
+def _ensures_dpkg_query_presence() -> None:
+    """Asserts that dpkg-query is found on the system."""
+    if Configuration().dpkg_query is None:
+        sys.stderr.write('dpkg-query not found on the system.\n')
+        sys.stderr.write('Is this a Debian (or Debian derivate) system?\n')
+        sys.exit(1)
+    print('Found dpkg-query: ' + color.tool(Configuration().dpkg_query))
 
 
 def _grab_package(pkg: str) -> None:
@@ -73,6 +82,7 @@ async def run() -> None:
     """The debinsight algorithm."""
     try:
         _ensures_apt_cache_presence()
+        _ensures_dpkg_query_presence()
         await _collect_targets()
     except Exception as e:
         sys.stderr.write('Error: ' + str(e))

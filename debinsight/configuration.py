@@ -32,6 +32,7 @@ class Configuration(metaclass=_Singleton):
         self.no_color = False
         self.targets = None
         self._apt_cache = None
+        self._dpkg_query = None
 
     @property
     def apt_cache(self) -> str:
@@ -39,3 +40,10 @@ class Configuration(metaclass=_Singleton):
         if self._apt_cache is None:
             self._apt_cache = shutil.which(cmd='apt-cache')
         return self._apt_cache
+
+    @property
+    def dpkg_query(self) -> str:
+        """Return the path to the dpkg-query executable."""
+        if self._dpkg_query is None:
+            self._dpkg_query = shutil.which(cmd='dpkg-query')
+        return self._dpkg_query
