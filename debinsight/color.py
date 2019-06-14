@@ -15,6 +15,17 @@ import colors
 from .configuration import Configuration
 
 
+def error(t: str) -> str:
+    """Color for file names.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='red')
+    return t
+
+
 def file(t: str) -> str:
     """Color for file names.
 
@@ -46,5 +57,3 @@ def tool(t: str) -> str:
     if not Configuration().no_color:
         return colors.color(t, fg='cyan')
     return t
-
-

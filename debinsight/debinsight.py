@@ -19,6 +19,7 @@ import re
 import sys
 
 from .configuration import Configuration
+from .database import Database
 from . import color
 
 
@@ -47,7 +48,7 @@ async def _detect_package_for_file(path: str) -> None:
             if m:
                 pkg = m.group(1)
                 print('Found ' + color.file(path) + ' in package ' + color.package(pkg))
-                _grab_package(pkg)
+                await _grab_package(pkg)
 
 
 async def _detect_target(target: str) -> None:
@@ -60,7 +61,7 @@ async def _detect_target(target: str) -> None:
     if os.path.exists(target):
         await _detect_package_for_file(target)
     else:
-        _grab_package(target)
+        await _grab_package(target)
 
 
 def _ensures_apt_cache_presence() -> None:
@@ -81,12 +82,21 @@ def _ensures_dpkg_query_presence() -> None:
     print('Found dpkg-query: ' + color.tool(Configuration().dpkg_query))
 
 
-def _grab_package(pkg: str) -> None:
+async def _grab_package(pkg: str) -> None:
     """Grab the given package if installed.
 
     :param pkg:     the name of the package
     """
     print('Searching for ' + color.package(pkg) + '...')
+    proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
+                                                stdout=asyncio.subprocess.PIPE,
+                                                stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await proc.communicate()
+    if proc.returncode != 0:
+        print(color.error('Failed to locate package ') + color.package(pkg) + color.error(' on the system.'))
+    else:
+        Database().add_package(pkg)
+        print('Package ' + color.package(pkg) + ' found.')
 
 
 async def run() -> None:

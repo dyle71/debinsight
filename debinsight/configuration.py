@@ -1,7 +1,7 @@
 # ------------------------------------------------------------
 # debinsight/configuration.py
 #
-# debinsight configurarion stuff
+# debinsight configuration stuff
 #
 # This file is part of debinsight.
 # See the LICENSE file for the software license.
