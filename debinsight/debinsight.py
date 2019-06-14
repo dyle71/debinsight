@@ -15,6 +15,7 @@
 
 import asyncio
 import os.path
+import re
 import sys
 
 from .configuration import Configuration
@@ -29,13 +30,24 @@ async def _collect_targets() -> None:
     await asyncio.wait(tasks)
 
 
-def _detect_package_for_file(path: str) -> None:
+async def _detect_package_for_file(path: str) -> None:
     """Detect the package which installed a certain file and if so add the package to insight.
 
     :param path:        path to file
     """
     path = os.path.abspath(path)
-    print('==DBG==: path: ' + str(path))
+    print('Searching for ' + color.file(path) + '...')
+    proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--search', path,
+                                                stdout=asyncio.subprocess.PIPE,
+                                                stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await proc.communicate()
+    if proc.returncode == 0:
+        for l in stdout.decode().splitlines():
+            m = re.search(r'(^.*):.*', l)
+            if m:
+                pkg = m.group(1)
+                print('Found ' + color.file(path) + ' in package ' + color.package(pkg))
+                _grab_package(pkg)
 
 
 async def _detect_target(target: str) -> None:
@@ -45,9 +57,8 @@ async def _detect_target(target: str) -> None:
 
     :param target:  the target to search
     """
-    print('Searching for ' + color.package(target) + '...')
     if os.path.exists(target):
-        _detect_package_for_file(target)
+        await _detect_package_for_file(target)
     else:
         _grab_package(target)
 
@@ -75,7 +86,7 @@ def _grab_package(pkg: str) -> None:
 
     :param pkg:     the name of the package
     """
-    pass
+    print('Searching for ' + color.package(pkg) + '...')
 
 
 async def run() -> None:

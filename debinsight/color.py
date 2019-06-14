@@ -15,14 +15,14 @@ import colors
 from .configuration import Configuration
 
 
-def tool(t: str) -> str:
-    """Color for tool names.
+def file(t: str) -> str:
+    """Color for file names.
 
     :param t:   the text
     :return:    a colorized version of the text
     """
     if not Configuration().no_color:
-        return colors.color(t, fg='cyan')
+        return colors.color(t, fg='green')
     return t
 
 
@@ -34,6 +34,17 @@ def package(t: str) -> str:
     """
     if not Configuration().no_color:
         return colors.color(t, fg='white', style='bold')
+    return t
+
+
+def tool(t: str) -> str:
+    """Color for tool names.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='cyan')
     return t
 
 
