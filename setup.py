@@ -29,7 +29,6 @@ setup(
     license='GPL-3',
 
     # sources
-    package_dir={'': 'debinsight'},
     packages=['debinsight'],
     py_modules=[],
     scripts=['bin/debinsight'],
