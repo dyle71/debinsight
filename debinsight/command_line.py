@@ -22,7 +22,7 @@ from . import debinsight
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option('--no-color', is_flag=True, help='Turn off color output.')
 @click.option('--version', '-v', is_flag=True, help='Show version and exit.')
-@click.option('--json', is_flag=True, help='Dump found information as json.')
+@click.option('--json', type=click.Path(), help='Dump found information as json into a file.')
 @click.argument('target', required=False, nargs=-1)
 def cli(no_color, version, json, target) -> None:
 

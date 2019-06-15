@@ -175,8 +175,9 @@ async def run() -> None:
             await _examine_open_packages()
             
         if Configuration().json:
-            print(Database().dump())
-            
+            with open(Configuration().json, 'wt') as f:
+                f.write(Database().dump())
+
     except Exception as e:
         sys.stderr.write('Error: ' + str(e))
         sys.exit(1)
