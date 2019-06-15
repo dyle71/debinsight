@@ -29,6 +29,7 @@ class Configuration(metaclass=_Singleton):
     """The debinsight program configuration."""
 
     def __init__(self):
+        self.json = False
         self.no_color = False
         self.targets = None
         self._apt_cache = None

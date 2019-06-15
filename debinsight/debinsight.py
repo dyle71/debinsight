@@ -36,10 +36,10 @@ async def _collect_package_status(pkg: str) -> None:
     stdout, stderr = await proc.communicate()
     if proc.returncode == 0:
         Database().packages[pkg] = {}
-        for l in stdout.decode().splitlines():
-            m = re.search(r'(^.*): (.*)', l)
+        for line in stdout.decode().splitlines():
+            m = re.search(r'(^.*): (.*)', line)
             if m:
-                key = m.group(1)
+                key = m.group(1).lower()
                 value = _expand_deb_query_value(key, m.group(2))
                 Database().packages[pkg][key] = value
     else:
@@ -67,8 +67,8 @@ async def _detect_package_for_file(path: str) -> None:
                                                 stderr=asyncio.subprocess.PIPE)
     stdout, stderr = await proc.communicate()
     if proc.returncode == 0:
-        for l in stdout.decode().splitlines():
-            m = re.search(r'(^.*):.*', l)
+        for line in stdout.decode().splitlines():
+            m = re.search(r'(^.*):.*', line)
             if m:
                 pkg = m.group(1)
                 print('Found ' + color.file(path) + ' in package ' + color.package(pkg))
@@ -113,15 +113,15 @@ def _expand_deb_query_value(key: str, value: str) -> Union[str, list]:
     :param value:   the value of this key
     :return:
     """
-    if key in ['Replaces', 'Depends', 'Breaks', 'Recommends', 'Conflicts', 'Suggests', 'Pre-Depends']:
+    if key in ['replaces', 'depends', 'breaks', 'recommends', 'conflicts', 'suggests', 'pre-depends']:
         package_version_list = []
-        for p in value.split(','):
-            p = p.strip()
-            m = re.match(r'(^.*).\((.*)\)', p)
+        for pkg in value.split(','):
+            pkg = pkg.strip()
+            m = re.match(r'(^.*).\((.*)\)', pkg)
             if m:
-                package_version_list.append((m.group(1), m.group(2)))
+                package_version_list.append({'package': m.group(1), 'version': m.group(2)})
             else:
-                package_version_list.append((p, None))
+                package_version_list.append({'package': pkg})
         return package_version_list
     return value
 
@@ -170,8 +170,13 @@ async def run() -> None:
         _ensures_apt_cache_presence()
         _ensures_dpkg_query_presence()
         await _collect_targets()
+        
         while Database().open:
             await _examine_open_packages()
+            
+        if Configuration().json:
+            print(Database().dump())
+            
     except Exception as e:
         sys.stderr.write('Error: ' + str(e))
         sys.exit(1)

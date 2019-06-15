@@ -22,8 +22,9 @@ from . import debinsight
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option('--no-color', is_flag=True, help='Turn off color output.')
 @click.option('--version', '-v', is_flag=True, help='Show version and exit.')
+@click.option('--json', is_flag=True, help='Dump found information as json.')
 @click.argument('target', required=False, nargs=-1)
-def cli(no_color, version, target) -> None:
+def cli(no_color, version, json, target) -> None:
 
     """debinsight is collects package information by examining the reverse dependency
     of packages installed in the Debian (or Ubuntu and derivates) operating systems.
@@ -46,6 +47,7 @@ def cli(no_color, version, target) -> None:
 
     config = Configuration()
     config.targets = target
+    config.json = json
     config.no_color = no_color
 
     uvloop.install()
