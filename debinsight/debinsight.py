@@ -35,9 +35,13 @@ async def _collect_package_files(pkg: str) -> None:
                                                 stderr=asyncio.subprocess.PIPE)
     stdout, _ = await proc.communicate()
     if proc.returncode == 0:
+        package_size = 0
         for line in stdout.decode().splitlines():
-            if os.path.exists(line) and os.path.isfile(line):
-                Database().packages[pkg].setdefault('files', {})[line] = os.path.getsize(line)
+            if os.path.exists(line) and os.path.isfile(line) and not os.path.islink(line):
+                file_size = os.path.getsize(line)
+                Database().packages[pkg].setdefault('files', {})[line] = file_size
+                package_size = package_size + file_size
+        Database().packages[pkg]['installed'] = package_size
 
 
 async def _collect_package_reverse_dependencies(pkg: str) -> None:
@@ -204,6 +208,8 @@ def _show_data() -> None:
     print('Collecting information done.')
     for pkg in Database().packages:
         _show_package(pkg)
+    if not Configuration().no_files:
+        _show_sum_installed()
 
 
 def _show_package(pkg: str) -> None:
@@ -220,6 +226,7 @@ def _show_package(pkg: str) -> None:
         _show_package_reverse_dependencies(p.get('rdepend', None))
     if not Configuration().no_files:
         _show_package_files(p.get('files', None))
+        _show_package_total_size(p.get('installed', None))
 
 
 def _show_package_dependencies(dependencies: list) -> None:
@@ -263,6 +270,24 @@ def _show_package_reverse_dependencies(dependencies: list) -> None:
     for dep in dependencies:
         pkg_str = color.package(dep)
         print('\t\t' + pkg_str)
+
+
+def _show_package_total_size(size: int) -> None:
+    """Shows the total size of all installed files of a package to the user.
+
+    :param size:    the total amount of bytes installed by the package
+    """
+    if size is None:
+        return
+    print('\tTotal amount of bytes of installed files: ' + color.file_size(str(size)))
+
+
+def _show_sum_installed() -> None:
+    """Shows the total sum of all installed files collected."""
+    total_sum = 0
+    for p in Database().packages:
+        total_sum = total_sum + Database().packages[p].get('installed', 0)
+    print('Total sum of bytes installed by these packages: ' + color.file_size(str(total_sum)))
 
 
 async def run() -> None:
