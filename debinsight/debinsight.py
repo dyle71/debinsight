@@ -114,15 +114,15 @@ def _expand_deb_query_value(key: str, value: str) -> Union[str, list]:
     :return:
     """
     if key in ['Replaces', 'Depends', 'Breaks', 'Recommends', 'Conflicts', 'Suggests', 'Pre-Depends']:
-        l = []
+        package_version_list = []
         for p in value.split(','):
             p = p.strip()
             m = re.match(r'(^.*).\((.*)\)', p)
             if m:
-                l.append((m.group(1), m.group(2)))
+                package_version_list.append((m.group(1), m.group(2)))
             else:
-                l.append((p, None))
-        return l
+                package_version_list.append((p, None))
+        return package_version_list
     return value
 
 
@@ -156,7 +156,7 @@ async def _grab_package(pkg: str) -> None:
     proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 stderr=asyncio.subprocess.PIPE)
-    stdout, stderr = await proc.communicate()
+    await proc.communicate()
     if proc.returncode != 0:
         print(color.error('Failed to locate package ') + color.package(pkg) + color.error(' on the system.'))
     else:

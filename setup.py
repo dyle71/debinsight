@@ -17,7 +17,7 @@ import debinsight
 
 setup(
     name='debinsight',
-    version=debinsight.__version__
+    version=debinsight.__version__,
     description='Reverse dependency package information of installed packages',
     long_description='This tool gathers information of installed packages '
                      'on Debian or Ubuntu operating systems.',
@@ -38,4 +38,3 @@ setup(
     package_data={'': ['*.txt']},
     include_package_data=False,
 )
-
