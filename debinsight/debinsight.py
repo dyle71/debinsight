@@ -17,10 +17,34 @@ import asyncio
 import os.path
 import re
 import sys
+from typing import Union
 
 from .configuration import Configuration
 from .database import Database
 from . import color
+
+
+async def _collect_package_status(pkg: str) -> None:
+    """Collect the status information of a single package (and put it into the database).
+    
+    :param pkg:     name of the package.
+    """
+    print('Collecting status information for ' + color.package(pkg) + '...')
+    proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
+                                                stdout=asyncio.subprocess.PIPE,
+                                                stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await proc.communicate()
+    if proc.returncode == 0:
+        Database().packages[pkg] = {}
+        for l in stdout.decode().splitlines():
+            m = re.search(r'(^.*): (.*)', l)
+            if m:
+                key = m.group(1)
+                value = _expand_deb_query_value(key, m.group(2))
+                Database().packages[pkg][key] = value
+    else:
+        print(color.error('Failed to collect status information for ') + color.package(pkg) + color.error('. o.O'))
+        del Database().packages[pkg]
 
 
 async def _collect_targets() -> None:
@@ -54,7 +78,7 @@ async def _detect_package_for_file(path: str) -> None:
 async def _detect_target(target: str) -> None:
     """Search for the given target name.
     This searches the local operating system if the given target
-    is a package name of a file.
+    is a package name or a file.
 
     :param target:  the target to search
     """
@@ -62,6 +86,44 @@ async def _detect_target(target: str) -> None:
         await _detect_package_for_file(target)
     else:
         await _grab_package(target)
+
+
+async def _examine_open_packages() -> None:
+    """Collect information about all current open packages."""
+    for pkg in Database().open:
+        await _examine_package(pkg)
+
+
+async def _examine_package(pkg: str) -> None:
+    """Collect information about a single package.
+    
+    :param pkg:     the name of the package to collect information for.
+    """
+    await _collect_package_status(pkg)
+
+
+def _expand_deb_query_value(key: str, value: str) -> Union[str, list]:
+    """Expands a value gained from deb-query --status if necessary.
+    
+    Some keys like 'Debends' are a list of other packages, which
+    might contain package information. For further ease of computation
+    we break them into a list of tuples of necessary.
+    
+    :param key:     the key as gained by deb-query
+    :param value:   the value of this key
+    :return:
+    """
+    if key in ['Replaces', 'Depends', 'Breaks', 'Recommends', 'Conflicts', 'Suggests', 'Pre-Depends']:
+        l = []
+        for p in value.split(','):
+            p = p.strip()
+            m = re.match(r'(^.*).\((.*)\)', p)
+            if m:
+                l.append((m.group(1), m.group(2)))
+            else:
+                l.append((p, None))
+        return l
+    return value
 
 
 def _ensures_apt_cache_presence() -> None:
@@ -83,10 +145,13 @@ def _ensures_dpkg_query_presence() -> None:
 
 
 async def _grab_package(pkg: str) -> None:
-    """Grab the given package if installed.
+    """Grab the given package if installed and add it then to the database.
 
     :param pkg:     the name of the package
     """
+    if pkg in Database().packages:
+        return
+    
     print('Searching for ' + color.package(pkg) + '...')
     proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
@@ -105,6 +170,8 @@ async def run() -> None:
         _ensures_apt_cache_presence()
         _ensures_dpkg_query_presence()
         await _collect_targets()
+        while Database().open:
+            await _examine_open_packages()
     except Exception as e:
         sys.stderr.write('Error: ' + str(e))
         sys.exit(1)

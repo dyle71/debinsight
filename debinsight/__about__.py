@@ -22,4 +22,3 @@ __summary__ = """A little tool to gather information of installed files of a Deb
 (or derivate) operating system."""
 __version__ = '0.0.1'
 __uri__ =  'https://github.com/dyle71/debinsight'
-

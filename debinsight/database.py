@@ -10,6 +10,8 @@
 
 """This module holds the application wide database."""
 
+import json
+
 
 class _Singleton(type):
 
@@ -33,3 +35,18 @@ class Database(metaclass=_Singleton):
         """Adds the package to the list of set of packages."""
         if package not in self.packages:
             self.packages[package] = None
+            
+    def dump(self) -> str:
+        """Dumps the package content to string as JSON.
+        
+        :return:    a json string of the current DB.
+        """
+        return json.dumps(self.packages, ensure_ascii=True)
+
+    @property
+    def open(self) -> list:
+        """Gets the list of unresolved, open packages still not yet examined.
+        
+        :return:    list of open (unexamined) packages.
+        """
+        return [p for p in self.packages if self.packages[p] is None]
