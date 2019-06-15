@@ -1,0 +1,13 @@
+{
+    "_template": "https://github.com/Springerle/dh-virtualenv-mold.git",
+    "distro": "UNRELEASED",
+    "email": "dyle71@gmail.com",
+    "full_name": "Oliver Maurhart",
+    "package": "debinsight",
+    "repo_name": "debian",
+    "short_description": "Gets an insight into installed Debian packages.",
+    "snake": "/usr/bin/python3",
+    "url": "https://github.com/dyle71/debinsight",
+    "version": "0.2.0",
+    "year": "2019"
+}

@@ -1,0 +1,6 @@
+debinsight.*.debhelper
+debinsight.substvars
+debinsight/
+debinsight-*/
+files
+debhelper-build-stamp

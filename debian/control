@@ -1,16 +1,20 @@
 Source: debinsight
-Section: python
+Section: contrib/python
 Priority: extra
 Maintainer: Oliver Maurhart <dyle71@gmail.com>
-Build-Depends: debhelper (>= 9), python3, dh-virtualenv (>= 0.8)
+Build-Depends: debhelper (>= 9), python, python-dev, dh-virtualenv (>= 0.10), tar
 Standards-Version: 3.9.5
+Homepage: https://github.com/dyle71/debinsight
 
 Package: debinsight
 Architecture: any
-Pre-Depends: dpkg (>= 1.16.1), python3.5, ${misc:Pre-Depends}
-Depends: ${misc:Depends}
-Description: gets an insight into installed Debian packages.
- debinsight is collects package information by examining the dependency
- and reverse dependencies of packages installed in the Debian
- (or Ubuntu and derivates) operating systems. On default it prints the
- current stats of a package and all files the package installs.
+Pre-Depends: dpkg (>= 1.16.1), python2.7 | python3, ${misc:Pre-Depends}
+Depends: ${python:Depends}, ${misc:Depends}
+Description: Gets an insight into installed Debian packages.
+    .
+    This is a distribution of "debinsight" as a self-contained
+    Python virtualenv wrapped into a Debian package ("omnibus" package,
+    all passengers on board). The packaged virtualenv is kept in sync with
+    the host's interpreter automatically.
+    .
+    See https://github.com/spotify/dh-virtualenv for more details.
