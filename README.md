@@ -95,6 +95,10 @@ gcc-9-base
 Total sum of bytes installed by these packages: 13867563 Bytes
 ```
 
+Beware, a `debsight --follow-depend libreoffice` will you collect all packages and files which
+are pulled in by the libreoffice package. This can get very, very broad.
+
+
 This tool does only check, what is installed on the system. It does not take any packages into 
 account (dependencies or reverse dependencies) which are available on some repositories but not 
 actually installed on the system at hand.
