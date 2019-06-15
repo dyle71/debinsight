@@ -35,6 +35,9 @@ class Configuration(metaclass=_Singleton):
         self.no_rdepend = False
         self.no_files = False
         self.targets = None
+        self.follow_depend = False
+        self.follow_rdepend = False
+        self.drop_not_installed = False
         self._apt_cache = None
         self._dpkg_query = None
 

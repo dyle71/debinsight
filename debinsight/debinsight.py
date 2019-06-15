@@ -24,12 +24,40 @@ from .database import Database
 from . import color
 
 
+def _add_dependencies(pkg: str) -> None:
+    """Adds the dependencies of a package to the list of packages to examine.
+
+    :param pkg:     name of the package to gather dependencies from
+    """
+    p = Database().packages.get(pkg, None)
+    if p is None:
+        return
+    depends = p.get('depends', None)
+    if depends:
+        for d in depends:
+            Database().add_package(d['package'])
+
+
+def _add_reverse_dependencies(pkg: str) -> None:
+    """Adds the reverse dependencies of a package to the list of packages to examine.
+
+    :param pkg:     name of the package to gather reverse dependencies from
+    """
+    p = Database().packages.get(pkg, None)
+    if p is None:
+        return
+    for rd in p.get('rdepend', []):
+        Database().add_package(rd['package'])
+
+
 async def _collect_package_files(pkg: str) -> None:
     """Collects the installed files of a package.
 
     :param pkg:     name of the package
     """
-    print('Collecting files for ' + color.package(pkg) + '...')
+    if pkg not in Database().packages:
+        return
+    print(color.package(pkg) + ': collecting installed files...')
     proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--listfiles', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 stderr=asyncio.subprocess.PIPE)
@@ -49,16 +77,22 @@ async def _collect_package_reverse_dependencies(pkg: str) -> None:
 
     :param pkg:     name of the package
     """
-    print('Collecting reverse dependencies for ' + color.package(pkg) + '...')
+    if pkg not in Database().packages:
+        return
+    print(color.package(pkg) + ': collecting reverse dependencies...')
     proc = await asyncio.create_subprocess_exec(Configuration().apt_cache, 'rdepends', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 stderr=asyncio.subprocess.PIPE)
     stdout, _ = await proc.communicate()
+    revdep = []
     if proc.returncode == 0:
         for line in stdout.decode().splitlines():
             m = re.search(r'^\s\s(\S*)$', line)
-            if m:
-                Database().packages[pkg].setdefault('rdepend', []).append(m.group(1))
+            if m and m.group(1) not in revdep:
+                revdep.append(m.group(1))
+    for rdep in revdep:
+        entry = {'package': rdep, 'installed': False}
+        Database().packages[pkg].setdefault('rdepend', []).append(entry)
 
 
 async def _collect_package_status(pkg: str) -> None:
@@ -66,7 +100,7 @@ async def _collect_package_status(pkg: str) -> None:
     
     :param pkg:     name of the package.
     """
-    print('Collecting status information for ' + color.package(pkg) + '...')
+    print(color.package(pkg) + ': collectign status information...')
     proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 stderr=asyncio.subprocess.PIPE)
@@ -80,7 +114,7 @@ async def _collect_package_status(pkg: str) -> None:
                 value = _expand_deb_query_value(key, m.group(2))
                 Database().packages[pkg][key] = value
     else:
-        print(color.error('Failed to collect status information for ') + color.package(pkg) + color.error('. o.O'))
+        print(color.package(pkg) + color.dropping(' is not installed, dropping.'))
         del Database().packages[pkg]
 
 
@@ -139,6 +173,10 @@ async def _examine_package(pkg: str) -> None:
     await _collect_package_status(pkg)
     await _collect_package_reverse_dependencies(pkg)
     await _collect_package_files(pkg)
+    if Configuration().follow_depend:
+        _add_dependencies(pkg)
+    if Configuration().follow_rdepend:
+        _add_reverse_dependencies(pkg)
 
 
 def _expand_deb_query_value(key: str, value: str) -> Union[str, list]:
@@ -205,7 +243,7 @@ async def _grab_package(pkg: str) -> None:
 
 def _show_data() -> None:
     """Shows the gathered information to the user."""
-    print('Collecting information done.')
+    print(color.header('=== Collecting information done. ==='))
     for pkg in Database().packages:
         _show_package(pkg)
     if not Configuration().no_files:
@@ -268,8 +306,13 @@ def _show_package_reverse_dependencies(dependencies: list) -> None:
         return
     print('\tReverse dependencies: ')
     for dep in dependencies:
-        pkg_str = color.package(dep)
-        print('\t\t' + pkg_str)
+        pkg_str = color.package(dep['package'])
+        if dep['installed'] or not Configuration().drop_not_installed:
+            if dep['installed']:
+                installed_str = ' ' + color.installed('[installed]')
+            else:
+                installed_str = ' ' + color.not_installed('[not installed]')
+            print('\t\t' + pkg_str + installed_str)
 
 
 def _show_package_total_size(size: int) -> None:
@@ -279,7 +322,7 @@ def _show_package_total_size(size: int) -> None:
     """
     if size is None:
         return
-    print('\tTotal amount of bytes of installed files: ' + color.file_size(str(size)))
+    print('\tTotal amount of bytes of installed files: ' + color.file_size(str(size) + ' Bytes'))
 
 
 def _show_sum_installed() -> None:
@@ -287,7 +330,7 @@ def _show_sum_installed() -> None:
     total_sum = 0
     for p in Database().packages:
         total_sum = total_sum + Database().packages[p].get('installed', 0)
-    print('Total sum of bytes installed by these packages: ' + color.file_size(str(total_sum)))
+    print('Total sum of bytes installed by these packages: ' + color.file_size(str(total_sum) + ' Bytes'))
 
 
 async def run() -> None:
@@ -300,6 +343,7 @@ async def run() -> None:
         while Database().open:
             await _examine_open_packages()
 
+        Database().fix_installed_rdependencies()
         _show_data()
 
         if Configuration().json:

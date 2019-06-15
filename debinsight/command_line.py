@@ -26,8 +26,20 @@ from . import debinsight
 @click.option('--no-files', is_flag=True, help='Turn off list of files.')
 @click.option('--version', '-v', is_flag=True, help='Show version and exit.')
 @click.option('--json', type=click.Path(), help='Dump found information as json into a file.')
+@click.option('--follow-depend', is_flag=True, help='Follow dependency graph (use with caution).')
+@click.option('--follow-rdepend', is_flag=True, help='Follow reverse dependency graph (use with caution).')
+@click.option('--drop-not-installed', is_flag=True, help='Do not list not installed packages.')
 @click.argument('target', required=False, nargs=-1)
-def cli(no_color, no_depend, no_rdepend, no_files, version, json, target) -> None:
+def cli(no_color=False,
+        no_depend=False,
+        no_rdepend=False,
+        no_files=False,
+        version=False,
+        json=None,
+        follow_depend=False,
+        follow_rdepend=False,
+        drop_not_installed=False,
+        target=None) -> None:
 
     """debinsight is collects package information by examining the dependency
     and reverse dependencies of packages installed in the Debian
@@ -57,6 +69,9 @@ def cli(no_color, no_depend, no_rdepend, no_files, version, json, target) -> Non
     config.no_depend = no_depend
     config.no_rdepend = no_rdepend
     config.no_files = no_files
+    config.follow_depend = follow_depend
+    config.follow_rdepend = follow_rdepend
+    config.drop_not_installed = drop_not_installed
 
     uvloop.install()
     asyncio.run(debinsight.run())

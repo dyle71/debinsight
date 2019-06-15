@@ -26,6 +26,17 @@ def dependency(t: str) -> str:
     return t
 
 
+def dropping(t: str) -> str:
+    """Color for dropping an item during collection phase.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='red')
+    return t
+
+
 def error(t: str) -> str:
     """Color for file names.
 
@@ -56,6 +67,39 @@ def file_size(t: str) -> str:
     """
     if not Configuration().no_color:
         return colors.color(t, fg='magenta')
+    return t
+
+
+def header(t: str) -> str:
+    """Color for header of user output.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='yellow', style='bold')
+    return t
+
+
+def installed(t: str) -> str:
+    """Color for installed status of packages for user output.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='magenta', style='bold')
+    return t
+
+
+def not_installed(t: str) -> str:
+    """Color for not installed status of packages for user output.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='blue')
     return t
 
 

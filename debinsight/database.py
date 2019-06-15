@@ -43,6 +43,12 @@ class Database(metaclass=_Singleton):
         """
         return json.dumps(self.packages, ensure_ascii=True)
 
+    def fix_installed_rdependencies(self):
+        """Fix installed entry for reverse dependencies."""
+        for p in self.packages:
+            for rdep in self.packages[p].get('rdepend', {}):
+                rdep['installed'] = rdep['package'] in self.packages
+
     @property
     def open(self) -> list:
         """Gets the list of unresolved, open packages still not yet examined.
