@@ -31,6 +31,9 @@ class Configuration(metaclass=_Singleton):
     def __init__(self):
         self.json = None
         self.no_color = False
+        self.no_depend = False
+        self.no_rdepend = False
+        self.no_files = False
         self.targets = None
         self._apt_cache = None
         self._dpkg_query = None

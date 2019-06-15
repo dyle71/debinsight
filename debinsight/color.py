@@ -15,6 +15,17 @@ import colors
 from .configuration import Configuration
 
 
+def dependency(t: str) -> str:
+    """Color for dependencies of a package
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='green')
+    return t
+
+
 def error(t: str) -> str:
     """Color for file names.
 
@@ -37,6 +48,17 @@ def file(t: str) -> str:
     return t
 
 
+def file_size(t: str) -> str:
+    """Color for file sizes.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='magenta')
+    return t
+
+
 def package(t: str) -> str:
     """Color for package names.
     
@@ -48,6 +70,17 @@ def package(t: str) -> str:
     return t
 
 
+def rev_dependency(t: str) -> str:
+    """Color for reverse dependencies of a package
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='red', style='negative')
+    return t
+
+
 def tool(t: str) -> str:
     """Color for tool names.
 
@@ -56,4 +89,15 @@ def tool(t: str) -> str:
     """
     if not Configuration().no_color:
         return colors.color(t, fg='cyan')
+    return t
+
+
+def version(t: str) -> str:
+    """Color for version string of packages.
+
+    :param t:   the text
+    :return:    a colorized version of the text
+    """
+    if not Configuration().no_color:
+        return colors.color(t, fg='white', style='bold')
     return t

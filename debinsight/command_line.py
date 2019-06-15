@@ -21,13 +21,18 @@ from . import debinsight
 
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option('--no-color', is_flag=True, help='Turn off color output.')
+@click.option('--no-depend', is_flag=True, help='Turn off output for dependencies.')
+@click.option('--no-rdepend', is_flag=True, help='Turn off output for reverse dependencies.')
+@click.option('--no-files', is_flag=True, help='Turn off list of files.')
 @click.option('--version', '-v', is_flag=True, help='Show version and exit.')
 @click.option('--json', type=click.Path(), help='Dump found information as json into a file.')
 @click.argument('target', required=False, nargs=-1)
-def cli(no_color, version, json, target) -> None:
+def cli(no_color, no_depend, no_rdepend, no_files, version, json, target) -> None:
 
-    """debinsight is collects package information by examining the reverse dependency
-    of packages installed in the Debian (or Ubuntu and derivates) operating systems.
+    """debinsight is collects package information by examining the dependency
+    and reverse dependencies of packages installed in the Debian
+    (or Ubuntu and derivates) operating systems. On default it prints the
+    current stats of a package and all files the package installs.
 
     TARGET can be either a package name or a file on the local system.
 
@@ -49,6 +54,9 @@ def cli(no_color, version, json, target) -> None:
     config.targets = target
     config.json = json
     config.no_color = no_color
+    config.no_depend = no_depend
+    config.no_rdepend = no_rdepend
+    config.no_files = no_files
 
     uvloop.install()
     asyncio.run(debinsight.run())
