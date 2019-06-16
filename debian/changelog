@@ -1,5 +1,5 @@
-debinsight (0.2.0) UNRELEASED; urgency=low
+debinsight (0.2-1) UNRELEASED; urgency=medium
 
-  * debinsight: Initial debian packaging
+  * Initial release
 
- -- Oliver Maurhart <dyle71@gmail.com> Sat, 15 Jun 2019 17:17:56 +0200
+ -- Oliver Maurhart <dyle71@gmail.com>  Sun, 16 Jun 2019 10:03:47 +0200

@@ -2,7 +2,7 @@ Source: debinsight
 Section: contrib/python
 Priority: extra
 Maintainer: Oliver Maurhart <dyle71@gmail.com>
-Build-Depends: debhelper (>= 9), python, python-dev, dh-virtualenv (>= 0.10), tar
+Build-Depends: debhelper (>= 9), python3, dh-virtualenv (>= 1.0), python3-setuptools, python3-pip, python3-dev, libffi-dev, tar
 Standards-Version: 3.9.5
 Homepage: https://github.com/dyle71/debinsight
 
