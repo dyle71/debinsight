@@ -1,8 +1,9 @@
 # Debian file creation
 
-This folder contains the Debian DEB package creation set. To build a DEP 
+This folder contains the Debian DEB package creation set. To build a DEB 
 package you need these packages installed:
 
+* debhelper
 * dh-virtualenv
 
 ```bash
@@ -10,7 +11,6 @@ $ sudo apt-get install debhelper dh-virtualenv
 ```
 
 If all is setup well, then a
-
 ```bash
 $ dpkg-buildpackage -us -uc -b --buildinfo-option=-udist --changes-option=-udist
 ```
