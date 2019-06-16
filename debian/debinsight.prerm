@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# "debinsight" prerm script
+#
+set -e
+
+dh_venv_install_dir='/opt/venvs/debinsight'
+dh_venv_package='debinsight'
+
+PIP3="$dh_venv_install_dir/bin/pip3"
+REQUIREMENTS="$dh_venv_install_dir/share/$dh_venv_package/requirements.txt"
+$PIP3 uninstall --no-cache-dir --yes -r $REQUIREMENTS
+
+exit 0
+

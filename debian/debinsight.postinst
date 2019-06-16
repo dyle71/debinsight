@@ -12,7 +12,8 @@ set -e
 #   dh_venv_package         Name of the Debian package
 #   dh_venv_install_dir     Root directory for the installed virtualenv
 
-
-
+PIP3="$dh_venv_install_dir/bin/pip3"
+REQUIREMENTS="$dh_venv_install_dir/share/$dh_venv_package/requirements.txt"
+$PIP3 install --no-cache-dir --ignore-installed -r $REQUIREMENTS
 
 exit 0

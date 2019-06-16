@@ -34,6 +34,8 @@ setup(
     scripts=['bin/debinsight'],
 
     # data
-    package_data={'': ['*.txt']},
     include_package_data=False,
+    data_files=[
+        ('share/debinsight', ['requirements.txt'])
+    ]
 )
