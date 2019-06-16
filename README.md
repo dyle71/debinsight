@@ -126,7 +126,7 @@ Also do not forget to include the pip3 packages in the virtual environemt.
 $ cd debinsight
 $ source venv/bin/activate
 ...
-$ venv/bin/pip3 -r requirements.txt
+$ venv/bin/pip3 install -r requirements.txt
 ```
 
 ## Packaging
