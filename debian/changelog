@@ -1,5 +1,5 @@
-debinsight (0.2-1) UNRELEASED; urgency=medium
+debinsight (1.0-1+deb9u1) disco; urgency=medium
 
   * Initial release
 
- -- Oliver Maurhart <dyle71@gmail.com>  Sun, 16 Jun 2019 10:03:47 +0200
+ -- Oliver Maurhart <dyle71@gmail.com>  Sun, 16 Jun 2019 14:11:24 +0200
