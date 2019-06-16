@@ -44,7 +44,12 @@ class Database(metaclass=_Singleton):
         return json.dumps(self.packages, ensure_ascii=True)
 
     def fix_installed_rdependencies(self):
-        """Fix installed entry for reverse dependencies."""
+        """Fix installed entry for reverse dependencies.
+        
+        Within a list of installed reverse dependencies, we cannot
+        at the first glance detect, if the reverse dependent package
+        is installed or not. Within this step we fix this.
+        """
         for p in self.packages:
             for rdep in self.packages[p].get('rdepend', {}):
                 rdep['installed'] = rdep['package'] in self.packages

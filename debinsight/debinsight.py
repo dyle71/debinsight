@@ -182,9 +182,9 @@ async def _examine_package(pkg: str) -> None:
 def _expand_deb_query_value(key: str, value: str) -> Union[str, list]:
     """Expands a value gained from deb-query --status if necessary.
     
-    Some keys like 'Debends' are a list of other packages, which
-    might contain package information. For further ease of computation
-    we break them into a list of tuples of necessary.
+    Some keys like 'Depends' are a list of other packages, which
+    might contain package version information too. For further
+    ease of computation we break them into a list of tuples of necessary.
     
     :param key:     the key as gained by deb-query
     :param value:   the value of this key
