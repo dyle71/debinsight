@@ -95,6 +95,12 @@ gcc-9-base
 Total sum of bytes installed by these packages: 13867563 Bytes
 ```
 
+The same can be achieved by
+```bash
+$ debinsight --follow-depend --drop-not-installed /bin/bash
+```
+With this, the tool searches for the package which installed the given file.
+
 Beware, a `debsight --follow-depend libreoffice` will you collect all packages and files which
 are pulled in by the libreoffice package. This can get very, very broad.
 
@@ -102,6 +108,33 @@ are pulled in by the libreoffice package. This can get very, very broad.
 This tool does only check, what is installed on the system. It does not take any packages into 
 account (dependencies or reverse dependencies) which are available on some repositories but not 
 actually installed on the system at hand.
+
+
+## Development
+
+This package is meant to be developed within a Python3 virtual environment.
+Therefore after cloning, create a virtual environment and activate it.
+```bash
+$ cd debinsight
+$ python3 -m venv venv
+...
+$ source venv/bin/activate
+...
+```
+Also do not forget to include the pip3 packages in the virtual environemt.
+```bash
+$ cd debinsight
+$ source venv/bin/activate
+...
+$ venv/bin/pip3 -r requirements.txt
+```
+
+## Packaging
+
+The folder `debian` contains all necessary info for creating a Debian 
+package. Note: the Debian package will create a Python3 virtual environment
+on the installed host too.
+
 
 ---
 
