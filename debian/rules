@@ -32,5 +32,8 @@ build-arch:
 	tar -x -C $(SDIST_DIR) --strip-components=1 --exclude '*.egg-info' -f dist/*.tar
 	dh $@ $(DH_VENV_ARGS) --sourcedir $(SDIST_DIR)
 
+override_dh_builddeb:
+	dh_builddeb --destdir=dist
+
 %:
 	dh $@ $(DH_VENV_ARGS) --sourcedir $(SDIST_DIR)

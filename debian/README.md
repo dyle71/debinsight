@@ -12,6 +12,7 @@ $ sudo apt-get install debhelper dh-virtualenv
 If all is setup well, then a
 
 ```bash
-$ dpkg-buildpackage -us -uc -b
+$ dpkg-buildpackage -us -uc -b --buildinfo-option=-udist --changes-option=-udist
 ```
-in the project root should create a deb package.
+in the project root should create a deb package in the `dist` folder.
+

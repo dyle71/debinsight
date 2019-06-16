@@ -26,7 +26,7 @@ setup(
     maintainer='Oliver Maurhart',
     maintainer_email='dyle71@gmail.com',
     url='https://www.github.com/dyle71/debinsight',
-    license='GPL-3',
+    license='MIT',
 
     # sources
     packages=['debinsight'],
