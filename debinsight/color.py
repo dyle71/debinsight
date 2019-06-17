@@ -1,7 +1,7 @@
 # ------------------------------------------------------------
 # debinsight/color.py
 #
-# provides colorfull output
+# provides colorful output
 #
 # This file is part of debinsight.
 # See the LICENSE file for the software license.

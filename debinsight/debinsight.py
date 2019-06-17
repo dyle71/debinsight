@@ -100,7 +100,7 @@ async def _collect_package_status(pkg: str) -> None:
     
     :param pkg:     name of the package.
     """
-    print(color.package(pkg) + ': collectign status information...')
+    print(color.package(pkg) + ': collecting status information...')
     proc = await asyncio.create_subprocess_exec(Configuration().dpkg_query, '--status', pkg,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 stderr=asyncio.subprocess.PIPE)
@@ -207,7 +207,7 @@ def _ensures_apt_cache_presence() -> None:
     """Asserts that apt-cache is found on the system."""
     if Configuration().apt_cache is None:
         sys.stderr.write('apt-cache not found on the system.\n')
-        sys.stderr.write('Is this a Debian (or Debian derivate) system?\n')
+        sys.stderr.write('Is this a Debian (or Debian derivative) system?\n')
         sys.exit(1)
     print('Found apt-cache: ' + color.tool(Configuration().apt_cache))
 
@@ -216,7 +216,7 @@ def _ensures_dpkg_query_presence() -> None:
     """Asserts that dpkg-query is found on the system."""
     if Configuration().dpkg_query is None:
         sys.stderr.write('dpkg-query not found on the system.\n')
-        sys.stderr.write('Is this a Debian (or Debian derivate) system?\n')
+        sys.stderr.write('Is this a Debian (or Debian derivative) system?\n')
         sys.exit(1)
     print('Found dpkg-query: ' + color.tool(Configuration().dpkg_query))
 
