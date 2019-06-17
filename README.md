@@ -8,7 +8,7 @@ This is a mere exercise for me making a Python 3 tool with click, uvloop,
 async, await and venv which bears _some_ benefit for the user. It is not intended
 to supersede a standard tool of the operating system.
 
-The idea is to show all the installed of an installed package. It does also
+The idea is to show all the installed files of an installed package. It does also
 allow for dependency-walk and reverse-dependencies. However, as this is just an
 exercise for me, I didn't make any optimizations and therefore adding both options
 might get somehow excessive for big packages.
@@ -121,7 +121,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ...
 ```
-Also do not forget to include the pip3 packages in the virtual environemt.
+Also do not forget to include the pip3 packages in the virtual environment.
 ```bash
 $ cd debinsight
 $ source venv/bin/activate

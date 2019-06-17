@@ -19,6 +19,6 @@ __copyright__ = 'Copyright (C) 2019, Oliver Maurhart'
 __license__ = 'MIT'
 __title__ = 'debinsight'
 __summary__ = """A little tool to gather information of installed files of a Debian
-(or derivate) operating system."""
+(or derivative) operating system."""
 __version__ = '1.0.0'
 __uri__ = 'https://github.com/dyle71/debinsight'

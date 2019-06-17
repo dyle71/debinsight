@@ -43,7 +43,7 @@ def cli(no_color=False,
 
     """debinsight collects package information by examining the dependency
     and reverse dependencies of packages installed in the Debian
-    (or Ubuntu and derivates) operating systems. On default, it prints the
+    (or Ubuntu and derivatives) operating systems. By default, it prints the
     current stats of a package and all files the package installs.
 
     TARGET can be either a package name or a file on the local system.
